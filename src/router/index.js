@@ -6,6 +6,7 @@ import About from '@/components/views/About.vue'
 import Login from '@/components/views/Login.vue'
 import Profile from '@/components/views/Profile.vue'
 import Register from '@/components/views/Register.vue'
+import Allow from '@/components/Allow.vue'
 
 Vue.use(Router)
 
@@ -19,6 +20,12 @@ var routes = [
     path: '/login',
     name: 'login',
     component: Login
+  },
+  {
+    path: '/login/allow/:token',
+    name: 'login-allow',
+    component: Allow,
+    props: true
   },
   {
     path: '/register',
@@ -47,6 +54,7 @@ let router = new Router({
 
 router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth)) {
+    console.log(store.getters.isLoggedIn)
     if (store.getters.isLoggedIn) {
       next()
       return

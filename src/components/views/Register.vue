@@ -2,7 +2,7 @@
   <div class="card-body">
     <h1>Register</h1>
     <b-breadcrumb :items="items"></b-breadcrumb>
-    <b-form @submit="register">
+    <b-form v-on:submit.prevent="register">
     <b-card
       class=""
       footer-tag="footer"
@@ -13,7 +13,7 @@
                 >
                     <b-form-input
                     id="first_name"
-                    v-model="first_name"
+                    v-model="form.first_name"
                     type="text"
                     required
                     placeholder="Enter first name here"
@@ -24,7 +24,7 @@
                 >
                     <b-form-input
                     id="last_name"
-                    v-model="last_name"
+                    v-model="form.last_name"
                     type="text"
                     required
                     placeholder="Enter last name here"
@@ -37,7 +37,7 @@
                 >
                     <b-form-input
                     id="email"
-                    v-model="email"
+                    v-model="form.email"
                     type="email"
                     required
                     placeholder="Enter email"
@@ -49,7 +49,7 @@
                 >
                     <b-form-datepicker
                       id="dob"
-                      v-model="dob"
+                      v-model="form.dob"
                       placeholder="Select your date of birth"
                       required
                       class="mb-2">
@@ -60,7 +60,7 @@
                   id="input-group-gender"
                 >
                     <b-form-select
-                        v-model="gender"
+                        v-model="form.gender"
                         required
                         :options="gender_options"
                     ></b-form-select>
@@ -80,11 +80,13 @@ export default {
   name: 'register',
   data () {
     return {
-      first_name: '',
-      last_name: '',
-      dob: '',
-      gender: 'male',
-      email: '',
+      form: {
+        first_name: '',
+        last_name: '',
+        dob: '',
+        gender: 'male',
+        email: '',
+      },
       gender_options: [
         { value: 'male', text: 'Male' },
         { value: 'female', text: 'Female' }
@@ -107,16 +109,23 @@ export default {
   },
   methods: {
     register: function () {
-      let data = {
-        first_name: this.first_name,
-        last_name: this.last_name,
-        email: this.email,
-        dob: this.dob,
-        gender: this.gender
-      }
-      this.$store.dispatch('register', data)
-        .then(() => this.$router.push('/'))
-        .catch(err => console.log(err))
+      this.$store.dispatch('register', this.form)
+        .then((response) => {
+          this.$bvToast.toast(response.data.message, {
+            'autoHideDelay': 1000,
+            'noHoverPause': true,
+            'variant': 'success',
+            'noCloseButton': true
+          })
+        })
+        .catch(err => {
+          this.$bvToast.toast(err.response.data.message, {
+            'autoHideDelay': 1000,
+            'noHoverPause': true,
+            'variant': 'danger',
+            'noCloseButton': true
+          })
+        })
     }
   }
 }

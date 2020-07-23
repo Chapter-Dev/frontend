@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-    
       <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <a class="navbar-brand" href="#">Test</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,6 +35,7 @@
 </template>
 
 <script>
+import users from '@/services/users'
 export default {
   name: 'App',
   computed: {
@@ -49,11 +49,15 @@ export default {
         })
     }
   },
-  created: function () {
+  beforeCreate: function () {
+    users.init()
+      .then(response => {
+        this.$store.dispatch('settings', response.data)
+      })
     this.$http.interceptors.response.use(undefined, function (err) {
       return new Promise(function (resolve, reject) {
         if (err.status === 401 && err.config && !err.config.__isRetryRequest) {
-          this.$store.dispatch('logout')
+          // this.$store.dispatch('logout')
         }
         throw err
       })

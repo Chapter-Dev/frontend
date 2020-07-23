@@ -2,12 +2,11 @@
   <div class="card-body">
     <h1>Login</h1>
     <b-breadcrumb :items="items"></b-breadcrumb>
-    <b-form @submit="login">
+    <b-form v-on:submit.prevent="login">
     <b-card
       class=""
       header-tag="header"
       sub-title="Login link will be sent to your email">
-      
         <b-card-text>
             <b-form-group
               id="input-group-1"
@@ -53,8 +52,23 @@ export default {
     login: function () {
       let email = this.email
       this.$store.dispatch('login', { email })
-        .then(() => this.$router.push('/'))
-        .catch(err => console.log(err))
+        .then((response) => {
+          this.$bvToast.toast(response.data.message, {
+            'autoHideDelay': 1000,
+            'noHoverPause': true,
+            'variant': 'success',
+            'noCloseButton': true
+          })
+        })
+        .catch(err => {
+          this.$bvToast.toast(err.response.data.message, {
+            'autoHideDelay': 1000,
+            'noHoverPause': true,
+            'variant': 'danger',
+            'noCloseButton': true
+          })
+        })
+      return false
     }
   }
 }
